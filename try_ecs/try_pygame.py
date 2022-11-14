@@ -1,11 +1,50 @@
 import pygame
 
 from ecs.world import World
-from ecs.component import VelocityComponent
+from ecs.component import *
+from ecs.system import *
+
+FPS = 60
+SCREEN_SIZE = (640, 480)
+
+def init():
+    pygame.init()
+    pygame.display.set_caption("猫をうごかそ")
+    pygame.display.set_icon(pygame.image.load("material/img/cat_chip01.png").subsurface((2,2,32,32)))
+    window = pygame.display.set_mode(SCREEN_SIZE)
+    clock = pygame.time.Clock()
+    world = World()
+    
+    bgm = pygame.mixer.Sound("material/sound/maodamashi_piano30.mp3")
+    
+    player_entity = world.create_entity()
+    enemy_entity = world.create_entity()
+    player_image_chipset = pygame.image.load("material/img/cat_chip01.png")
+    enemy_image_chipset = pygame.image.load("material/img/simple_enemy01.png")
+    
+    world.add_component_to_entity(player_entity, VelocityComponent(0.0, 0.0))
+    world.add_component_to_entity(player_entity, RenderableComponent(100,100, 33, 32, player_image_chipset, player_image_chipset.subsurface((0,0,33,32))))
+    world.add_component_to_entity(player_entity, PlayableComponent(playable=True))
+    
+    world.add_component_to_entity(enemy_entity, RenderableComponent(300, 100, 32, 32, enemy_image_chipset, enemy_image_chipset.subsurface((0,0,32,32))))
+    
+    world.add_system(RenderSystem(window, (255,255,255)), 200)
+    world.add_system(KeyControlSystem(move_speed=3), 100)
+    world.add_system(MovementSystem(max=SCREEN_SIZE), 0)
+    world.add_system(SoundMixerSystem(bgm), 50)
+    return world
+
+def main():
+    
+    world = init()
+    clock = pygame.time.Clock()
+    
+    while world.running:
+        for i in range(len(world.systems)):
+            world.systems[i].process()
+        clock.tick(FPS)
+    
 
 if __name__ == "__main__":
-    world = World()
-    entity1 = world.create_entity()
-    velocity_component = VelocityComponent(0.0,0.0)
-    world.add_component_to_entity(entity1, velocity_component)
-    print(entity1)
+    main()
+    pygame.quit()

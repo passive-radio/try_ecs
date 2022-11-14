@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from .component import Component
 from .entity import Entity
+from .system import System
 
 version = '0.1'
 
@@ -19,6 +20,10 @@ class World():
         self.entities = {}
         self.next_entity_id = 0
         self.systems = []
+        
+        self._get_component_cache = {}
+        self._get_components_cache = {}
+        self.running = True
         
     def create_entity(self,):
         entity = self.next_entity_id
@@ -44,6 +49,28 @@ class World():
     def get_entity_object(self, entity: int):
         return self.entities[entity]
     
+    def _get_component(self, component_type: Component):
+        for entity in self.components.get(component_type):
+            yield entity, self.entities[entity][component_type]
+    
+    def get_component(self, component_type: Component):
+        return self._get_component_cache.setdefault(
+            component_type, list(self._get_component(component_type))
+        )
+        
+    def _get_components(self, *component_types: list[Component]):
+        for entity in set.intersection(*[self.components[ct] for ct in component_types]):
+            yield entity, [self.entities[entity][ct] for ct in component_types]
+        
+    def get_components(self, *component_types: list[Component]):
+        return self._get_components_cache.setdefault(component_types, list(self._get_components(*component_types)))
+    
+    def add_system(self, system: System, priority: int = 0) -> None:
+        system.priority = priority
+        system.world = self
+        self.systems.append(system)
+        self.systems.sort(key=lambda proc: proc.priority, reverse=True)
+        print(self.systems)
 if __name__ == "__main__":
     import component as ecs_component
     world = World()
