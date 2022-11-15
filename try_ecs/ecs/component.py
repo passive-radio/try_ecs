@@ -40,6 +40,10 @@ class RenderableComponent(Component):
 @dataclass
 class PlayableComponent(Component):
     playable: bool = True
+    
+@dataclass
+class CollisionComponent(Component):
+    isCollided: bool = False
 
 if __name__ == "__main__":
     test_component = VelocityComponent(.1, .2)

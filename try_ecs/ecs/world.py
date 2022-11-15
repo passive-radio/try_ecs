@@ -71,6 +71,7 @@ class World():
         self.systems.append(system)
         self.systems.sort(key=lambda proc: proc.priority, reverse=True)
         print(self.systems)
+    
 if __name__ == "__main__":
     import component as ecs_component
     world = World()

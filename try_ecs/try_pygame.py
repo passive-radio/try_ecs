@@ -25,13 +25,16 @@ def init():
     world.add_component_to_entity(player_entity, VelocityComponent(0.0, 0.0))
     world.add_component_to_entity(player_entity, RenderableComponent(100,100, 33, 32, player_image_chipset, player_image_chipset.subsurface((0,0,33,32))))
     world.add_component_to_entity(player_entity, PlayableComponent(playable=True))
+    world.add_component_to_entity(player_entity, CollisionComponent())
     
     world.add_component_to_entity(enemy_entity, RenderableComponent(300, 100, 32, 32, enemy_image_chipset, enemy_image_chipset.subsurface((0,0,32,32))))
+    world.add_component_to_entity(enemy_entity, CollisionComponent())
     
     world.add_system(RenderSystem(window, (255,255,255)), 200)
     world.add_system(KeyControlSystem(move_speed=3), 100)
     world.add_system(MovementSystem(max=SCREEN_SIZE), 0)
     world.add_system(SoundMixerSystem(bgm), 50)
+    world.add_system(CollisionSystem(), -1)
     return world
 
 def main():

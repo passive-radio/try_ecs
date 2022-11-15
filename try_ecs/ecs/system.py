@@ -19,11 +19,19 @@ class MovementSystem(System):
         
     
     def process(self):
-        for ent, (vel, rend) in self.world.get_components(component.VelocityComponent, component.RenderableComponent):
-            rend.x += vel.x
-            rend.y += vel.y
-            rend.x = min(self.maxx-rend.w, max(self.minx, rend.x))
-            rend.y = min(self.maxy-rend.h, max(self.miny, rend.y))
+        for ent, (vel, rend, collide) in self.world.get_components(
+            component.VelocityComponent, 
+            component.RenderableComponent, component.CollisionComponent):
+            
+            if collide.isCollided == True:
+                rend.x = rend.prevx
+                rend.y = rend.prevy
+            else:
+                rend.x += vel.x
+                rend.y += vel.y
+                rend.x = min(self.maxx-rend.w, max(self.minx, rend.x))
+                rend.y = min(self.maxy-rend.h, max(self.miny, rend.y))
+                
             
 
 class RenderSystem(System):
@@ -36,11 +44,17 @@ class RenderSystem(System):
     def process(self):
         self.window.fill(self.clear_color)
         
-        for ent, rend in self.world.get_component(component.RenderableComponent):
+        for ent, (rend, collide) in self.world.get_components(component.RenderableComponent, component.CollisionComponent):
             try: 
-                self.window.blit(rend.rend_image, (rend.x, rend.y))
+                if collide.isCollided == True:
+                    self.window.blit(rend.rend_image, (rend.prevx, rend.prevy))
+                else:
+                    self.window.blit(rend.rend_image, (rend.x, rend.y))
             except:
-                self.window.blit(rend.image, (rend.x, rend.y))
+                if collide.isCollided == True:
+                    self.window.blit(rend.image, (rend.prevx, rend.prevy))
+                else:
+                    self.window.blit(rend.image, (rend.x, rend.y))
         
         pygame.display.flip()
         
@@ -94,6 +108,25 @@ class CollisionSystem(System):
     
     def process(self, *args, **kwargs):
         
-        for ent, (rend) in self.world.get_components(component.RenderableComponent):
-            pass
-    
+        self._rects = {}
+        for ent, [rend]in self.world.get_components(component.RenderableComponent):
+            self._rects[ent] = pygame.Rect(rend.x, rend.y, rend.w, rend.h)
+            
+        for ent, [rend, collide] in self.world.get_components(component.RenderableComponent, component.CollisionComponent):
+            current_rect = pygame.Rect(rend.x, rend.y, rend.w, rend.h)
+            rects = self._rects.copy()
+            rects.pop(ent, None)
+            other_rects = []
+            for _, rect in rects.items():
+                other_rects.append(rect)
+            
+            """
+            for test
+            """
+            # print(ent, current_rect.collidelist(other_rects))
+            if current_rect.collidelist(other_rects) == 0:
+                collide.isCollided = True
+            else:
+                collide.isCollided = False
+                rend.prevx = rend.x
+                rend.prevy = rend.y
