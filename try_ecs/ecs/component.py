@@ -3,6 +3,7 @@ from typing import TypeVar
 from dataclasses import dataclass
 
 from pygame import image as pg_image
+import pytmx
 version = '0.1'
 
 """
@@ -44,6 +45,13 @@ class PlayableComponent(Component):
 @dataclass
 class CollisionComponent(Component):
     isCollided: bool = False
+    
+@dataclass
+class MapComponent(Component):
+    image: pytmx.TiledMap
+    x: int = 0
+    y: int = 0
+    layer: int = 1
 
 if __name__ == "__main__":
     test_component = VelocityComponent(.1, .2)

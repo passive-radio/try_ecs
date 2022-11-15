@@ -42,7 +42,7 @@ class RenderSystem(System):
         self.clear_color = clear_color
         
     def process(self):
-        self.window.fill(self.clear_color)
+        # self.window.fill(self.clear_color)
         
         for ent, (rend, collide) in self.world.get_components(component.RenderableComponent, component.CollisionComponent):
             try: 
@@ -57,7 +57,27 @@ class RenderSystem(System):
                     self.window.blit(rend.image, (rend.x, rend.y))
         
         pygame.display.flip()
-        
+
+class StaticRenderSystem(System):
+    
+    def __init__(self, window, clear_color: tuple = (0,0,0)) -> None:
+        super().__init__()
+        self.window = window
+        self.clear_color = clear_color
+    
+    def process(self):
+        self.window.fill(self.clear_color)
+        for ent, [map] in self.world.get_components(component.MapComponent):
+            for layer in map.image.visible_layers:
+                if layer.id == 0:
+                    break
+                else:
+                    for x, y, gid in layer:
+                        if gid == 0:
+                            pass
+                        else:
+                            tile = map.image.get_tile_image_by_gid(gid)
+                            self.window.blit(tile, (x*map.image.tilewidth,y*map.image.tileheight))
 
 class KeyControlSystem(System):
     

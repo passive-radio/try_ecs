@@ -13,7 +13,7 @@ Thus, I abandon my rights to this project until it is natural to my claiming my 
 4. [x] Create a mini game that you can control your unit.
 
 ## Phase 1 (Making a simple GUI RPG.)
-1. [ ] Create CollisionSystem that you can handle the collision between any objects.
+1. [x] Create CollisionSystem that you can handle the collision between any objects.
 2. [ ] Draw map on screen after parsing tmx and tsx files.
 3. [ ] Add MovementAnimation component and system(add animation to moving objects).
 4. [ ] Add StatsComponent where stores stats of an unit like HP, MP, Strength, Wisdom, Intelligence.
