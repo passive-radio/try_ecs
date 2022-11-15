@@ -2,3 +2,7 @@ code_reference
 code_reference/*
 .venv309
 .venv309/*
+ecs/__pycache__
+ecs/__pycache__/*
+__pycache__
+__pycache__/*
