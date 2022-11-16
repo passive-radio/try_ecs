@@ -1,9 +1,11 @@
 import pygame
 from . import component
+from . import world
+from typing import Type, TypeVar
 
 class System():
     priority: int = 0
-    world = 'World'
+    world: Type[world.World]
     
     def process(self, *args, **kwargs):
         pass
@@ -87,7 +89,6 @@ class KeyControlSystem(System):
         self.dy = move_speed
         
     def process(self):
-        
         for ent, (playable_comp, vel, rend) in self.world.get_components(component.PlayableComponent, component.VelocityComponent, component.RenderableComponent):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

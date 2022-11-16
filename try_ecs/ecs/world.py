@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from .component import Component
 from .entity import Entity
-from .system import System
 
 version = '0.1'
 
@@ -65,7 +64,7 @@ class World():
     def get_components(self, *component_types: list[Component]):
         return self._get_components_cache.setdefault(component_types, list(self._get_components(*component_types)))
     
-    def add_system(self, system: System, priority: int = 0) -> None:
+    def add_system(self, system, priority: int = 0) -> None:
         system.priority = priority
         system.world = self
         self.systems.append(system)
