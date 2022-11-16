@@ -57,3 +57,4 @@ if __name__ == "__main__":
     test_component = VelocityComponent(.1, .2)
     print(test_component)
     print(type(test_component))
+    
