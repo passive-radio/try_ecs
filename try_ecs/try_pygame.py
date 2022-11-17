@@ -6,7 +6,7 @@ from ecs.system import *
 import pytmx
 
 FPS = 60
-SCREEN_SIZE = (640, 480)
+SCREEN_SIZE = (960, 640)
 
 def load_map(filepath: str) -> pytmx.TiledMap:
     from pytmx import load_pygame

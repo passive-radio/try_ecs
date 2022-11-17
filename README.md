@@ -13,10 +13,15 @@ Thus, I abandon my rights to this project until it is natural to my claiming my 
 4. [x] Create a mini game that you can control your unit.
 5. [ ] (Next) Add process method to World class
 
-## Phase 1 (Making a simple GUI RPG.)
+## Phase 1 (Making a simple game.)
 1. [x] Create CollisionSystem that you can handle the collision between any objects.
 2. [x] Draw map on screen after parsing tmx and tsx files.(temporarily solved by adopting pytmx)
 3. [x] Add MovementAnimation component and system(add animation to moving objects).
 4. [ ] Add StatsComponent where stores stats of an unit like HP, MP, Strength, Wisdom, Intelligence.
 5. [ ] Create BattleSystem.
 6. [ ] Create SceneComponent and SceneContrlSystem (system includes: start menu handing).
+
+
+## Phase 2 (Making a simple GUI PRG.)
+1. [ ] Make BattleSystem in a RPG style.
+2. [ ] Make SceneComponent and SceneControSystem in a RPG style.
