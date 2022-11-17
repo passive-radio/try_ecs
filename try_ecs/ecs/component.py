@@ -37,7 +37,7 @@ class RenderableComponent(Component):
     h: float = 36
     image: pg_image = None
     rend_image: pg_image = None
-    
+    rend_pos: tuple = (0,0)
 @dataclass
 class PlayableComponent(Component):
     playable: bool = True
@@ -52,6 +52,10 @@ class MapComponent(Component):
     x: int = 0
     y: int = 0
     layer: int = 1
+    
+@dataclass
+class AnimationComponent(Component):
+    step: int = 0
 
 if __name__ == "__main__":
     test_component = VelocityComponent(.1, .2)

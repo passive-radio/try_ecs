@@ -13,6 +13,15 @@ class System():
 class MovementSystem(System):
     
     def __init__(self, max: tuple, min: tuple = (0,0)) -> None:
+        """_summary_
+
+        Parameters
+        ----------
+        max : tuple
+            maximum (x, y) where any object cannot go through over max.
+        min : tuple, optional
+            minimum (x, y) where any object cannot go through towards under min. by default (0,0)
+        """
         super().__init__()
         self.minx = min[0]
         self.miny = min[1]
@@ -38,7 +47,16 @@ class MovementSystem(System):
 
 class RenderSystem(System):
     
-    def __init__(self, window, clear_color: tuple=(0,0,0)) -> None:
+    def __init__(self, window: pygame.Surface, clear_color: tuple=(0,0,0)) -> None:
+        """_summary_
+
+        Parameters
+        ----------
+        window : pygame.Surface
+            Screen where you want to draw a renderable object in.
+        clear_color : tuple, optional
+            clearing color that window will be initialized with. RGB(red, green, blue). by default (0,0,0)
+        """
         super().__init__()
         self.window = window
         self.clear_color = clear_color
@@ -48,6 +66,7 @@ class RenderSystem(System):
         
         for ent, (rend, collide) in self.world.get_components(component.RenderableComponent, component.CollisionComponent):
             try: 
+                rend.rend_image = rend.image.subsurface((rend.rend_pos[0], rend.rend_pos[1], rend.w, rend.h))
                 if collide.isCollided == True:
                     self.window.blit(rend.rend_image, (rend.prevx, rend.prevy))
                 else:
@@ -62,7 +81,16 @@ class RenderSystem(System):
 
 class StaticRenderSystem(System):
     
-    def __init__(self, window, clear_color: tuple = (0,0,0)) -> None:
+    def __init__(self, window: pygame.Surface, clear_color: tuple = (0,0,0)) -> None:
+        """_summary_
+
+        Parameters
+        ----------
+        window : pygame.Surface
+            Screen where you want to draw a renderable object in.
+        clear_color : tuple, optional
+            clearing color that window will be initialized with. RGB(red, green, blue). by default (0,0,0)
+        """
         super().__init__()
         self.window = window
         self.clear_color = clear_color
@@ -83,7 +111,14 @@ class StaticRenderSystem(System):
 
 class KeyControlSystem(System):
     
-    def __init__(self, move_speed: int = 1) -> None:
+    def __init__(self, move_speed: float= 1.0) -> None:
+        """_summary_
+
+        Parameters
+        ----------
+        move_speed : float, optional
+            movement speed, by default 1.0
+        """
         super().__init__()
         self.dx = move_speed
         self.dy = move_speed
@@ -98,16 +133,16 @@ class KeyControlSystem(System):
                         self.world.running = False
                     elif event.key == pygame.K_LEFT:
                         vel.x = -1*self.dx
-                        rend.rend_image = rend.image.subsurface((0,rend.h,rend.w,rend.h))
+                        rend.rend_pos = (rend.rend_pos[0], rend.h)
                     elif event.key == pygame.K_RIGHT:
                         vel.x = self.dx
-                        rend.rend_image = rend.image.subsurface((0,rend.h*2,rend.w,rend.h))
+                        rend.rend_pos = (rend.rend_pos[0], rend.h*2)
                     elif event.key == pygame.K_UP:
                         vel.y = -1*self.dy
-                        rend.rend_image = rend.image.subsurface((0,rend.h*3,rend.w,rend.h))
+                        rend.rend_pos = (rend.rend_pos[0], rend.h*3)
                     elif event.key == pygame.K_DOWN:
                         vel.y = self.dy
-                        rend.rend_image = rend.image.subsurface((0,0,rend.w,rend.h))
+                        rend.rend_pos = (rend.rend_pos[0], 0)
                 elif event.type == pygame.KEYUP:
                     if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
                         vel.x = 0
@@ -115,7 +150,16 @@ class KeyControlSystem(System):
                         vel.y = 0
                         
 class SoundMixerSystem(System):
-    def __init__(self, sound, volume=0.1) -> None:
+    def __init__(self, sound: pygame.mixer.Sound, volume: float=0.1) -> None:
+        """_summary_
+
+        Parameters
+        ----------
+        sound : pygame.mixer.Sound
+            _description_
+        volume : float, optional
+            set the volume of sound (0~1.0), by default 0.1
+        """
         super().__init__()
         self.bgm = sound
         self.bgm.set_volume(volume)
@@ -127,7 +171,7 @@ class CollisionSystem(System):
     def __init__(self) -> None:
         super().__init__()
     
-    def process(self, *args, **kwargs):
+    def process(self, ):
         
         self._rects = {}
         for ent, [rend]in self.world.get_components(component.RenderableComponent):
@@ -151,3 +195,16 @@ class CollisionSystem(System):
                 collide.isCollided = False
                 rend.prevx = rend.x
                 rend.prevy = rend.y
+                
+class AnimationSystem(System):
+    def __init__(self) -> None:
+        super().__init__()
+        
+    def process(self,):
+        
+        for ent, [anime,rend] in self.world.get_components(component.AnimationComponent,component.RenderableComponent):
+            anime.step += 0.1
+            if anime.step > 3:
+                anime.step = 0
+            rend.rend_pos = ((rend.w-2)*int(anime.step), rend.rend_pos[1])
+            
