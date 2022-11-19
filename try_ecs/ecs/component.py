@@ -56,6 +56,11 @@ class MapComponent(Component):
 @dataclass
 class AnimationComponent(Component):
     step: int = 0
+    
+@dataclass
+class StatsComponent(Component):
+    hp: int = 100
+    
 
 if __name__ == "__main__":
     test_component = VelocityComponent(.1, .2)

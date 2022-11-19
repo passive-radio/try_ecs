@@ -38,9 +38,12 @@ def init():
     world.add_component_to_entity(player_entity, PlayableComponent(playable=True))
     world.add_component_to_entity(player_entity, CollisionComponent())
     world.add_component_to_entity(player_entity, AnimationComponent(step=0))
+    world.add_component_to_entity(player_entity, StatsComponent(hp=100))
     
     world.add_component_to_entity(enemy_entity, RenderableComponent(300, 100, 32, 32, enemy_image_chipset, enemy_image_chipset.subsurface((0,0,32,32))))
     world.add_component_to_entity(enemy_entity, CollisionComponent())
+    world.add_component_to_entity(enemy_entity, StatsComponent(hp=50))
+    
     
     world.add_component_to_entity(map_entity, MapComponent(load_map("material/my_first_map.tmx"), 0, 0))
     
@@ -59,11 +62,10 @@ def main():
     clock = pygame.time.Clock()
     
     while world.running:
-        for i in range(len(world.systems)):
-            world.systems[i].process()
+        world.process()
         clock.tick(FPS)
     
+    pygame.quit()
 
 if __name__ == "__main__":
     main()
-    pygame.quit()

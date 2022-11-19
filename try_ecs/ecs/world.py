@@ -70,6 +70,10 @@ class World():
         self.systems.append(system)
         self.systems.sort(key=lambda proc: proc.priority, reverse=True)
         print(self.systems)
+        
+    def process(self):
+        for i in range(len(self.systems)):
+            self.systems[i].process()
     
 if __name__ == "__main__":
     import component as ecs_component

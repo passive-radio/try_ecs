@@ -208,3 +208,15 @@ class AnimationSystem(System):
                 anime.step = 0
             rend.rend_pos = ((rend.w-2)*int(anime.step), rend.rend_pos[1])
             
+class BattleSystem(System):
+    def __init__(self) -> None:
+        super().__init__()
+        
+    def process(self):
+        
+        for ent, [stats, ] in self.world.get_components(component.StatsComponent, ):
+            
+            for event in pygame.event.get():
+                if event.type() == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if self.world.
