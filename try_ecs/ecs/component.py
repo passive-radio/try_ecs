@@ -35,6 +35,8 @@ class RenderableComponent(Component):
     y: float = 0.0
     w: float = 33
     h: float = 36
+    prevx = x
+    prevy = y
     image: pg_image = None
     rend_image: pg_image = None
     rend_pos: tuple = (0,0)
@@ -60,6 +62,10 @@ class AnimationComponent(Component):
 @dataclass
 class StatsComponent(Component):
     hp: int = 100
+
+@dataclass
+class RandomMovementComponent(Component):
+    rand: bool = True
     
 
 if __name__ == "__main__":

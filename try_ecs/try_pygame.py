@@ -5,6 +5,10 @@ from ecs.component import *
 from ecs.system import *
 import pytmx
 
+from level import Level
+
+import random
+
 FPS = 60
 SCREEN_SIZE = (960, 640)
 
@@ -16,7 +20,7 @@ def load_map(filepath: str) -> pytmx.TiledMap:
         print(layer.id == 1)
     return map_image
 
-def init():
+def init() -> tuple[World,pygame.Surface]:
     pygame.init()
     pygame.display.set_caption("猫をうごかそ")
     pygame.display.set_icon(pygame.image.load("material/img/cat_chip01.png").subsurface((2,2,32,32)))
@@ -54,17 +58,34 @@ def init():
     world.add_system(CollisionSystem(), -1)
     world.add_system(StaticRenderSystem(window), 300)
     world.add_system(AnimationSystem(), 400)
-    return world
+    world.add_system(RandomMovementSystem(max=SCREEN_SIZE), 500)
+    return world, window
 
 def main():
     
-    world = init()
+    world, window = init()
     clock = pygame.time.Clock()
     
+    level = Level(True, window, SCREEN_SIZE, (10,10,10), 60)
+    level.start_menu()
+    
+    bombs = []
+    bomb_image_chipset = pygame.image.load("material/img/bomb.png")
+    
+    for _ in range(4):
+        bomb = world.create_entity()
+        world.add_component_to_entity(bomb, RenderableComponent(100*random.randrange(1, 5,1),50*random.randrange(1,10,1),32,32,bomb_image_chipset, bomb_image_chipset.subsurface((0,0,32,32))))
+        world.add_component_to_entity(bomb, CollisionComponent(False))
+        world.add_component_to_entity(bomb, VelocityComponent())
+        world.add_component_to_entity(bomb, RandomMovementComponent())
+        bombs.append(bomb)
+    
     while world.running:
+            
         world.process()
         clock.tick(FPS)
-    
+        
+        
     pygame.quit()
 
 if __name__ == "__main__":

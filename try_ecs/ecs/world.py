@@ -74,6 +74,10 @@ class World():
     def process(self):
         for i in range(len(self.systems)):
             self.systems[i].process()
+        
+    def has_component(self, entity: int, component_type: Component):
+        return component_type in self.entities[entity]
+        
     
 if __name__ == "__main__":
     import component as ecs_component

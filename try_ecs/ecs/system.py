@@ -3,6 +3,8 @@ from . import component
 from . import world
 from typing import Type, TypeVar
 
+import random
+
 class System():
     priority: int = 0
     world: Type[world.World]
@@ -33,6 +35,9 @@ class MovementSystem(System):
         for ent, (vel, rend, collide) in self.world.get_components(
             component.VelocityComponent, 
             component.RenderableComponent, component.CollisionComponent):
+            
+            if self.world.has_component(ent, component.RandomMovementComponent):
+                pass
             
             if collide.isCollided == True:
                 rend.x = rend.prevx
@@ -213,10 +218,37 @@ class BattleSystem(System):
         super().__init__()
         
     def process(self):
-        
-        for ent, [stats, ] in self.world.get_components(component.StatsComponent, ):
+        pass
+    
+class RandomMovementSystem(MovementSystem):
             
-            for event in pygame.event.get():
-                if event.type() == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        if self.world.
+    def __init__(self, max: tuple, min: tuple = (0, 0)) -> None:
+        super().__init__(max, min)
+        self.min = min
+        self.max = max
+        
+    def process(self):
+        
+        for ent, [rend, vel, rand, collide] in self.world.get_components(component.RenderableComponent, component.VelocityComponent, component.RandomMovementComponent, component.CollisionComponent):
+            vel.x += random.randrange(-3, 4, 1)
+            vel.y += random.randrange(-3, 4, 1)
+            
+            if vel.x < -10 or vel.x > 10:
+                vel.x = random.randrange(-3, 4, 1)
+            if vel.y < -10 or vel.y > 10:
+                vel.y = random.randrange(-3, 4, 1)
+            
+            if rend.x < self.min[0] + 1 or rend.x > self.max[0] -rend.w:
+                vel.x *= -1
+            if rend.y < self.min[0] + 1 or rend.y > self.max[1] -rend.h:
+                vel.y *= -1
+            
+            # if collide.isCollided == True:
+            #     rend.x = rend.prevx
+            #     rend.y = rend.prevy
+            # else:
+            #     rend.x += vel.x
+            #     rend.y += vel.y
+            rend.x = min(self.maxx-rend.w, max(self.minx, rend.x))
+            rend.y = min(self.maxy-rend.h, max(self.miny, rend.y))
+            
