@@ -85,7 +85,6 @@ def main():
         world.process()
         clock.tick(FPS)
         
-        
     pygame.quit()
 
 if __name__ == "__main__":
